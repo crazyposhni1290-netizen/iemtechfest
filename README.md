@@ -61,7 +61,8 @@ npx serve .
 | Gallery captions | `index.html` | Each `<figure class="gallery-item">` has `data-caption` and an `alt` |
 | Sponsors | `index.html` | Search `SPONSORS` — edit the `.sponsor` blocks (the list is intentionally duplicated for the seamless marquee) |
 | FAQ | `index.html` | Search `FAQ` — edit the questions/answers in `.faq-item` blocks |
-| Contact details / socials | `index.html` | Search `CONTACT` — email, phone, address and social links |
+| Logo / branding mark | `index.html` | The `IEM` badge appears 3× — search `preloader__logo`, `navbar__logo-mark` (navbar + footer). Sizing lives in `style.css` under `.navbar__logo-mark` / `.preloader__logo`. The favicon is an inline SVG `<link rel="icon">` in `<head>` |
+| Contact details / socials | `index.html` | Search `CONTACT` — venue, emails, phones, website and social links. Values are IEM Kolkata's public details from [iem.edu.in/contact-us](https://iem.edu.in/contact-us/); replace them with the fest committee's own accounts when those go live |
 | Registration / login storage | `script.js` | `localStorage` keys: `tn_registrations`, `tn_users`, `tn_session`, `tn_newsletter`, `tn_theme` |
 
 ---
