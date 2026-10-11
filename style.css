@@ -1,5 +1,5 @@
 /* ============================================================================
-   TechNova 2026 — style.css
+   INNOVACIÓN 2026 — style.css
    ----------------------------------------------------------------------------
    TABLE OF CONTENTS
      01. CSS VARIABLES (re-theme the whole site here!)
@@ -462,7 +462,7 @@ h1, h2, h3, h4 {
   gap: 1.25rem;
 }
 
-.navbar__logo { display: inline-flex; align-items: center; gap: .7rem; }
+.navbar__logo { display: inline-flex; align-items: center; gap: .7rem; flex-shrink: 0; }
 .navbar__logo-mark {
   font-family: var(--f-display); font-weight: 900; font-size: .74rem;
   letter-spacing: .02em;
@@ -474,7 +474,8 @@ h1, h2, h3, h4 {
   box-shadow: 0 8px 22px rgba(168, 85, 247, .45);
 }
 .navbar__logo-text {
-  font-family: var(--f-display); font-weight: 800; font-size: 1.12rem;
+  font-family: var(--f-display); font-weight: 800; font-size: .95rem;
+  letter-spacing: -.02em; white-space: nowrap;
   color: var(--c-heading);
 }
 .navbar__logo-text em {
@@ -590,9 +591,10 @@ h1, h2, h3, h4 {
 
 /* ---- 3D hero title ---- */
 .hero__title {
-  font-size: clamp(2.9rem, 8vw, 5.6rem);
+  font-size: clamp(1.9rem, 6.6vw, 4.3rem);
   font-weight: 900;
   line-height: 1.02;
+  letter-spacing: -.015em;
   perspective: 1000px;               /* enables the 3D tilt below */
   margin-bottom: 1.15rem;
 }
@@ -1925,8 +1927,13 @@ textarea + i, .input-wrap:has(textarea) > i { top: 20px; transform: none; }
 @media (max-width: 640px) {
   .section { padding: 4.65rem 0; }
 
+  .navbar__logo { gap: .5rem; }
+  .navbar__logo-mark { width: 36px; height: 36px; border-radius: 11px; font-size: .64rem; }
+  .navbar__logo-text { font-size: .78rem; }
+  .navbar__logo-text em { display: none; }  /* hide 2026 superscript to clear the hamburger */
+
   .hero { padding-top: 2.35rem; }
-  .hero__title { font-size: clamp(2.35rem, 11vw, 3.25rem); }
+  .hero__title { font-size: clamp(1.8rem, 8.6vw, 2.85rem); }
   .hero__cta .btn { width: 100%; }
   .hero__visual { min-height: 285px; }
   .cube-scene, .cube, .cube__face { width: 135px; height: 135px; }
