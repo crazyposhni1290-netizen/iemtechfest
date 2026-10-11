@@ -1,5 +1,5 @@
 /* ============================================================================
-   TechNova 2026 — script.js
+   INNOVACIÓN 2026 — script.js
    ----------------------------------------------------------------------------
    Pure vanilla JavaScript (no libraries!). Each feature lives in its own
    clearly-marked section so it is easy to find and edit.
@@ -217,7 +217,7 @@
      06. THEME TOGGLE — dark / light, remembered in localStorage
      ========================================================================== */
   const themeToggle = qs("#themeToggle");
-  const THEME_KEY = "tn_theme";
+  const THEME_KEY = "inn_theme";
 
   // Restore saved theme (dark is the default)
   const savedTheme = localStorage.getItem(THEME_KEY);
@@ -805,9 +805,9 @@
         at: new Date().toISOString(),
       };
 
-      const registrations = loadJSON("tn_registrations", []);
+      const registrations = loadJSON("inn_registrations", []);
       registrations.push(entry);
-      localStorage.setItem("tn_registrations", JSON.stringify(registrations));
+      localStorage.setItem("inn_registrations", JSON.stringify(registrations));
 
       // Success popup
       const successModal = qs("#successModal");
@@ -904,8 +904,8 @@
   const signupTab = qs("#signupTab");
   const authInk = qs("#authInk");
   const authTitle = qs("#authTitle");
-  const USERS_KEY = "tn_users";
-  const SESSION_KEY = "tn_session";
+  const USERS_KEY = "inn_users";
+  const SESSION_KEY = "inn_session";
 
   function openAuthModal(mode = "login") {
     if (!authModal) return;
@@ -913,7 +913,7 @@
     document.body.style.overflow = "hidden";
     switchAuthTab(mode);
     // Pre-fill remembered email
-    const remembered = localStorage.getItem("tn_remember");
+    const remembered = localStorage.getItem("inn_remember");
     if (remembered && qs("#liEmail")) qs("#liEmail").value = remembered;
     qs(mode === "login" ? "#liEmail" : "#suName")?.focus();
   }
@@ -1122,9 +1122,9 @@
     // Remember me → store email
     const remember = qs("#liRemember")?.checked;
     if (remember) {
-      localStorage.setItem("tn_remember", user.email);
+      localStorage.setItem("inn_remember", user.email);
     } else {
-      localStorage.removeItem("tn_remember");
+      localStorage.removeItem("inn_remember");
     }
 
     // "Log in": save the session and greet the user in the navbar
@@ -1234,9 +1234,9 @@
       shake(input);
       return;
     }
-    const subs = loadJSON("tn_newsletter", []);
+    const subs = loadJSON("inn_newsletter", []);
     subs.push({ email: input.value.trim(), at: new Date().toISOString() });
-    localStorage.setItem("tn_newsletter", JSON.stringify(subs));
+    localStorage.setItem("inn_newsletter", JSON.stringify(subs));
     input.value = "";
     showToast("Subscribed! Welcome aboard. 🚀", "success");
   });
@@ -1246,5 +1246,5 @@
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   /* ---- Welcome toast so students see the toast system in action ---- */
-  setTimeout(() => showToast("Welcome to TechNova 2026 — explore, compete, conquer! ⚡", "info"), 1400);
+  setTimeout(() => showToast("Welcome to INNOVACIÓN 2026 — explore, compete, conquer! ⚡", "info"), 1400);
 })();

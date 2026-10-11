@@ -1,4 +1,4 @@
-# TechNova 2026 — College Tech Fest Website
+# INNOVACIÓN 2026 — College Tech Fest Website
 
 A complete, production-quality **single-page website** built with only **HTML5 + CSS3 + vanilla JavaScript** — no frameworks, no build step.
 
@@ -63,7 +63,7 @@ npx serve .
 | FAQ | `index.html` | Search `FAQ` — edit the questions/answers in `.faq-item` blocks |
 | Logo / branding mark | `index.html` | The `IEM` badge appears 3× — search `preloader__logo`, `navbar__logo-mark` (navbar + footer). Sizing lives in `style.css` under `.navbar__logo-mark` / `.preloader__logo`. The favicon is an inline SVG `<link rel="icon">` in `<head>` |
 | Contact details / socials | `index.html` | Search `CONTACT` — venue, emails, phones, website and social links. Values are IEM Kolkata's public details from [iem.edu.in/contact-us](https://iem.edu.in/contact-us/); replace them with the fest committee's own accounts when those go live |
-| Registration / login storage | `script.js` | `localStorage` keys: `tn_registrations`, `tn_users`, `tn_session`, `tn_newsletter`, `tn_theme` |
+| Registration / login storage | `script.js` | `localStorage` keys: `inn_registrations`, `inn_users`, `inn_session`, `inn_remember`, `inn_newsletter`, `inn_theme` |
 
 ---
 
