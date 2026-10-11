@@ -1,15 +1,21 @@
 # ---------------------------------------------------------------------------
 # GitHub Pages deployment — publishes the site to
 #   https://crazyposhni1290-netizen.github.io/iemtechfest/
-# Runs automatically on every push to "main".
+#
+# Runs on every push to "main" (and manually from the Actions tab).
 # No build step: the repo IS the site (static HTML/CSS/JS).
+#
+# The first step checks how Pages is configured in Settings → Pages:
+#   • "GitHub Actions" source → this workflow deploys the site
+#   • "Deploy from a branch"  → GitHub publishes main automatically; we do nothing
+#   • Not enabled yet         → the job prints instructions and exits green
 # ---------------------------------------------------------------------------
 name: Deploy static site to GitHub Pages
 
 on:
   push:
     branches: ["main"]
-  workflow_dispatch:   # lets you run it manually from the Actions tab
+  workflow_dispatch:   # run manually from the Actions tab
 
 # Tokens the deploy job needs (least privilege)
 permissions:
@@ -24,25 +30,51 @@ concurrency:
 
 jobs:
   deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ---- Detect how Pages is set up (never fails the run) ----
+      - name: Check Pages configuration
+        id: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "/repos/${GITHUB_REPOSITORY}/pages" > pages.json 2>/dev/null; then
+            build_type=$(jq -r '.build_type // "legacy"' pages.json)
+          else
+            build_type="none"
+          fi
+          echo "build_type=$build_type" >> "$GITHUB_OUTPUT"
+          echo "Pages build type: $build_type"
+
       - name: Setup Pages
-        # "enablement: true" turns Pages on automatically if it isn't already
+        if: steps.pages.outputs.build_type == 'workflow'
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload site artifact
+        if: steps.pages.outputs.build_type == 'workflow'
         uses: actions/upload-pages-artifact@v3
         with:
           path: "."
 
       - name: Deploy to GitHub Pages
+        if: steps.pages.outputs.build_type == 'workflow'
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # ---- Friendly guidance when Pages is not using Actions ----
+      - name: Guidance
+        if: steps.pages.outputs.build_type != 'workflow'
+        run: |
+          if [ "${{ steps.pages.outputs.build_type }}" = "legacy" ]; then
+            echo "✅ GitHub Pages is publishing from a branch — GitHub handles deploys automatically. Nothing to do here."
+          else
+            echo "ℹ️ GitHub Pages is not enabled yet for this repository."
+            echo "   One-time step: Settings → Pages → Build and deployment →"
+            echo "   choose 'Deploy from a branch' (main / root) OR 'GitHub Actions' → Save."
+          fi
