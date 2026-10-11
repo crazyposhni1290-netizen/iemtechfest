@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<!--
+  ============================================================================
+  TechNova 2026 — College Tech Fest Website
+  ============================================================================
+  • Pure HTML5 + CSS3 + vanilla JavaScript (no frameworks).
+  • Three files: index.html (structure), style.css (design), script.js (logic).
+  • Quick edit map:
+      - Fest name / tagline / dates / venue .... search "FEST DETAILS"
+      - Colours / theme .......................... style.css  → :root variables
+      - Countdown date ........................... script.js  → FEST_START
+      - Events / schedule / FAQ text ............. search "EVENTS GRID", "TIMELINE", "FAQ"
+      - Gallery photos ........................... /images/gallery1.jpg ... gallery8.jpg
+  ============================================================================
+-->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO / social preview -->
+  <title>TechNova 2026 — IEM Kolkata Tech Fest | Innovate. Compete. Conquer.</title>
+  <meta name="description" content="TechNova 2026, the annual inter-college tech fest of IEM Kolkata. 4–6 December 2026. 40+ events, ₹5L prize pool, hackathons, robotics, esports, design, cultural nights." />
+  <meta name="theme-color" content="#070714" />
+
+  <!-- Favicon (inline SVG — no extra file needed) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2322d3ee'/%3E%3Cstop offset='.5' stop-color='%23a855f7'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%230b0b1e'/%3E%3Ctext x='32' y='42' font-family='Arial Black,Arial' font-size='26' font-weight='900' text-anchor='middle' fill='url(%23g)'%3ETN%3C/text%3E%3C/svg%3E" />
+
+  <!-- Google Fonts: Orbitron (headings) + Poppins (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome icons (CDN, only library used — icons only) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ================================================================
+       PRELOADER — animated loading screen, fades out when page is ready
+       ================================================================ -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader__ring"></div>
+    <div class="preloader__ring preloader__ring--2"></div>
+    <div class="preloader__logo">TN<span>26</span></div>
+    <p class="preloader__text">Loading the future…</p>
+  </div>
+
+  <!-- Skip link for keyboard/screen-reader users -->
+  <a class="skip-link" href="#home">Skip to main content</a>
+
+  <!-- Custom glowing cursor follower (hidden on touch devices) -->
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+  <!-- Scroll progress bar (fixed, top of page) -->
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- ================================================================
+       BACKGROUND LAYER — gradient mesh + floating neon orbs + star canvas
+       (fixed behind all content, parallax-driven by script.js)
+       ================================================================ -->
+  <div class="bg-layer" aria-hidden="true">
+    <div class="bg-mesh"></div>
+    <div class="orb orb--purple" data-parallax="0.12"></div>
+    <div class="orb orb--cyan" data-parallax="0.2"></div>
+    <div class="orb orb--pink" data-parallax="0.08"></div>
+    <div class="orb orb--violet" data-parallax="0.16"></div>
+    <!-- Particle / star field drawn on <canvas> by script.js -->
+    <canvas id="starfield" class="starfield"></canvas>
+  </div>
+
+  <!-- ================================================================
+       NAVBAR — sticky glass navigation
+       ================================================================ -->
+  <header class="navbar" id="navbar">
+    <div class="container navbar__inner">
+
+      <!-- Logo -->
+      <a href="#home" class="navbar__logo" aria-label="TechNova 2026 home">
+        <span class="navbar__logo-mark">TN</span>
+        <span class="navbar__logo-text">TechNova<em>2026</em></span>
+      </a>
+
+      <!-- Desktop links -->
+      <nav class="navbar__links" id="navLinks" aria-label="Main navigation">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#events" class="nav-link">Events</a>
+        <a href="#schedule" class="nav-link">Schedule</a>
+        <a href="#gallery" class="nav-link">Gallery</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+
+      <!-- Actions -->
+      <div class="navbar__actions">
+        <!-- Theme toggle (dark / light) -->
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <!-- Logged-in chip (shown after sign-in, managed by script.js) -->
+        <div class="user-chip" id="userChip" hidden>
+          <i class="fa-solid fa-circle-user"></i>
+          <span id="userName">Hi</span>
+          <button class="user-chip__logout" id="logoutBtn" aria-label="Log out"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+
+        <!-- Auth buttons -->
+        <button class="btn btn--ghost btn--sm" id="loginBtn">Login</button>
+        <a href="#register" class="btn btn--primary btn--sm magnetic">Register</a>
+
+        <!-- Hamburger (mobile) -->
+        <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ================================================================
+         HERO — 3D title, countdown timer, digital clock, CSS 3D cube
+         FEST DETAILS: edit the name / tagline / dates / venue below
+         ================================================================ -->
+    <section class="hero" id="home">
+      <div class="container hero__grid">
+
+        <div class="hero__content">
+          <!-- Eyebrow badge -->
+          <p class="hero__eyebrow reveal" data-reveal="fade">
+            <i class="fa-solid fa-bolt"></i> IEM Kolkata presents · Inter-college Tech Fest
+          </p>
+
+          <!-- 3D hero title (tilts with the mouse — see script.js) -->
+          <h1 class="hero__title reveal" id="heroTitle" data-reveal="up">
+            <span class="word">Tech</span><span class="word word--accent">Nova</span>
+            <span class="word word--year">2026</span>
+          </h1>
+
+          <!-- Tagline -->
+          <p class="hero__tagline reveal" data-reveal="fade">
+            Innovate. Compete. <span class="gradient-text">Conquer the Future.</span>
+          </p>
+
+          <!-- Date + venue chips -->
+          <div class="hero__meta reveal" data-reveal="fade">
+            <span class="chip"><i class="fa-solid fa-calendar-days"></i> 4<sup>th</sup> – 6<sup>th</sup> December 2026</span>
+            <span class="chip"><i class="fa-solid fa-location-dot"></i> IEM Campus, Salt Lake Sector V, Kolkata</span>
+          </div>
+
+          <!-- Call-to-action buttons -->
+          <div class="hero__cta reveal" data-reveal="fade">
+            <a href="#register" class="btn btn--primary btn--lg magnetic ripple">
+              <i class="fa-solid fa-rocket"></i> Register Now
+            </a>
+            <a href="#events" class="btn btn--glass btn--lg magnetic">
+              <i class="fa-solid fa-chevron-right"></i> Explore Events
+            </a>
+          </div>
+
+          <!-- Live digital clock widget (updates every second) -->
+          <div class="clock-widget glass reveal" data-reveal="fade" aria-label="Current time and date">
+            <div class="clock-widget__live"><span class="live-dot"></span> LIVE</div>
+            <div class="clock-widget__time" id="digitalClock">00:00:00</div>
+            <div class="clock-widget__date" id="digitalDate">—</div>
+          </div>
+        </div>
+
+        <!-- Hero visual: pure-CSS 3D rotating cube + floating shapes -->
+        <div class="hero__visual reveal" data-reveal="scale" aria-hidden="true">
+          <div class="cube-scene">
+            <div class="cube" id="heroCube">
+              <div class="cube__face cube__face--front"><i class="fa-solid fa-code"></i></div>
+              <div class="cube__face cube__face--back"><i class="fa-solid fa-robot"></i></div>
+              <div class="cube__face cube__face--right"><i class="fa-solid fa-gamepad"></i></div>
+              <div class="cube__face cube__face--left"><i class="fa-solid fa-palette"></i></div>
+              <div class="cube__face cube__face--top"><i class="fa-solid fa-microchip"></i></div>
+              <div class="cube__face cube__face--bottom"><i class="fa-solid fa-trophy"></i></div>
+            </div>
+          </div>
+          <div class="float-shape float-shape--ring"></div>
+          <div class="float-shape float-shape--tri"></div>
+          <div class="float-shape float-shape--sq"></div>
+        </div>
+      </div>
+
+      <!-- ===== COUNTDOWN TIMER ===== -->
+      <div class="container">
+        <div class="countdown glass reveal" data-reveal="up" role="timer" aria-label="Countdown to TechNova 2026">
+          <p class="countdown__label"><i class="fa-solid fa-hourglass-half"></i> Fest begins in</p>
+          <div class="countdown__grid">
+            <div class="countdown__unit"><span class="countdown__num gradient-text" id="cdDays">00</span><span class="countdown__cap">Days</span></div>
+            <div class="countdown__sep">:</div>
+            <div class="countdown__unit"><span class="countdown__num gradient-text" id="cdHours">00</span><span class="countdown__cap">Hours</span></div>
+            <div class="countdown__sep">:</div>
+            <div class="countdown__unit"><span class="countdown__num gradient-text" id="cdMins">00</span><span class="countdown__cap">Minutes</span></div>
+            <div class="countdown__sep">:</div>
+            <div class="countdown__unit"><span class="countdown__num gradient-text" id="cdSecs">00</span><span class="countdown__cap">Seconds</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         STATS COUNTERS — count up when scrolled into view
+         ================================================================ -->
+    <section class="stats" aria-label="Fest statistics">
+      <div class="container stats__grid">
+        <div class="stat glass reveal" data-reveal="up">
+          <i class="fa-solid fa-users stat__icon"></i>
+          <div class="stat__num"><span class="counter" data-target="5000">0</span><span class="stat__suffix">+</span></div>
+          <p class="stat__label">Participants</p>
+        </div>
+        <div class="stat glass reveal" data-reveal="up">
+          <i class="fa-solid fa-calendar-check stat__icon"></i>
+          <div class="stat__num"><span class="counter" data-target="40">0</span><span class="stat__suffix">+</span></div>
+          <p class="stat__label">Events</p>
+        </div>
+        <div class="stat glass reveal" data-reveal="up">
+          <i class="fa-solid fa-building-columns stat__icon"></i>
+          <div class="stat__num"><span class="counter" data-target="100">0</span><span class="stat__suffix">+</span></div>
+          <p class="stat__label">Colleges</p>
+        </div>
+        <div class="stat glass reveal" data-reveal="up">
+          <i class="fa-solid fa-trophy stat__icon"></i>
+          <div class="stat__num"><span class="stat__prefix">₹</span><span class="counter" data-target="5">0</span><span class="stat__suffix">L</span></div>
+          <p class="stat__label">Prize Pool</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         ABOUT US
+         ================================================================ -->
+    <section class="section" id="about">
+      <div class="container">
+        <header class="section__head reveal" data-reveal="up">
+          <p class="section__eyebrow">Who we are</p>
+          <h2 class="section__title gradient-text">About TechNova</h2>
+          <p class="section__sub">Three days. Infinite ideas. One unforgettable experience.</p>
+        </header>
+
+        <div class="about__grid">
+          <!-- Story card -->
+          <article class="glass card about__story reveal" data-reveal="left">
+            <h3><i class="fa-solid fa-meteor"></i> The Story</h3>
+            <p>
+              <strong>TechNova</strong> is the flagship annual inter-college techno-cultural fest of the
+              <strong>Institute of Engineering &amp; Management (IEM), Kolkata</strong>. Born from a student
+              idea in a hostel corridor, it has grown into East India's most electrifying celebration of
+              technology, creativity and competition.
+            </p>
+            <p>
+              From 24-hour hackathons and robot combat to esports arenas, design jams and a starlit
+              cultural night — TechNova is where the next generation of builders, designers and dreamers
+              collide. This December, we turn the volume of innovation all the way up.
+            </p>
+            <a href="#register" class="btn btn--primary magnetic ripple">Be part of it</a>
+          </article>
+
+          <!-- Highlight tiles with animated icons -->
+          <div class="about__highlights">
+            <div class="glass card about__tile reveal" data-reveal="right">
+              <div class="about__tile-icon"><i class="fa-solid fa-lightbulb"></i></div>
+              <h4>Innovation First</h4>
+              <p>Hackathons, ideathons and maker labs that turn raw ideas into real products.</p>
+            </div>
+            <div class="glass card about__tile reveal" data-reveal="right">
+              <div class="about__tile-icon"><i class="fa-solid fa-handshake"></i></div>
+              <h4>Industry Connect</h4>
+              <p>Tech talks, mentorship corners and networking with top recruiters &amp; founders.</p>
+            </div>
+            <div class="glass card about__tile reveal" data-reveal="right">
+              <div class="about__tile-icon"><i class="fa-solid fa-globe"></i></div>
+              <h4>Campus Energy</h4>
+              <p>100+ colleges, 5000+ minds, one venue buzzing with caffeine and code.</p>
+            </div>
+            <div class="glass card about__tile reveal" data-reveal="right">
+              <div class="about__tile-icon"><i class="fa-solid fa-star"></i></div>
+              <h4>Night to Remember</h4>
+              <p>Pro-shows, DJs, food streets and the legendary Battle of the Bands finale.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         UPCOMING EVENTS — filterable grid of event cards
+         EVENTS GRID: edit / add cards below (copy one <article> block)
+         ================================================================ -->
+    <section class="section" id="events">
+      <div class="container">
+        <header class="section__head reveal" data-reveal="up">
+          <p class="section__eyebrow">Compete &amp; conquer</p>
+          <h2 class="section__title gradient-text">Upcoming Events</h2>
+          <p class="section__sub">40+ events across 6 arenas — pick your battlefield.</p>
+        </header>
+
+        <!-- Category filter buttons -->
+        <div class="filters reveal" data-reveal="fade" role="group" aria-label="Filter events by category">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="coding">Coding</button>
+          <button class="filter-btn" data-filter="robotics">Robotics</button>
+          <button class="filter-btn" data-filter="gaming">Gaming</button>
+          <button class="filter-btn" data-filter="design">Design</button>
+          <button class="filter-btn" data-filter="quiz">Quiz</button>
+          <button class="filter-btn" data-filter="cultural">Cultural</button>
+        </div>
+
+        <!-- Event cards (tilt + glow on hover — see script.js initTilt) -->
+        <div class="events-grid" id="eventsGrid">
+
+          <article class="glass card event-card tilt reveal" data-reveal="up" data-category="coding">
+            <div class="event-card__top">
+              <span class="event-card__cat"><i class="fa-solid fa-code"></i> Coding</span>
+              <span class="event-card__prize">₹50,000</span>
+            </div>
+            <h3 class="event-card__name">CodeStorm — 24hr Hackathon</h3>
+            <p class="event-card__desc">Build, break and ship a working prototype overnight. Mentors on call, pizza on tap.</p>
+            <ul class="event-card__meta">
+              <li><i class="fa-regular fa-calendar"></i> Dec 4, 2026</li>
+              <li><i class="fa-regular fa-clock"></i> 09:00 AM</li>
+              <li><i class="fa-solid fa-location-dot"></i> Innovation Lab</li>
+            </ul>
+            <button class="btn btn--primary btn--block ripple event-register">Register <i class="fa-solid fa-arrow-right"></i></button>
+          </article>
+
+          <article class="glass card event-card tilt reveal" data-reveal="up" data-category="coding">
+            <div class="event-card__top">
+              <span class="event-card__cat"><i class="fa-solid fa-code"></i> Coding</span>
+              <span class="event-card__prize">₹25,000</span>
+            </div>
+            <h3 class="event-card__name">Clash of Coders</h3>
+            <p class="event-card__desc">Pure competitive programming — 3 hours, 6 problems, one leaderboard.</p>
+            <ul class="event-card__meta">
+              <li><i class="fa-regular fa-calendar"></i> Dec 5, 2026</li>
+              <li><i class="fa-regular fa-clock"></i> 10:00 AM</li>
+              <li><i class="fa-solid fa-location-dot"></i> CSE Lab 2</li>
+            </ul>
+            <button class="btn btn--primary btn--block ripple event-register">Register <i class="fa-solid fa-arrow-right"></i></button>
+          </article>
+
+          <article class="glass card event-card tilt reveal" data-reveal="up" data-category="robotics">
+            <div class="event-card__top">
+              <span class="event-card__cat"><i class="fa-solid fa-robot"></i> Robotics</span>
+              <span class="event-card__prize">₹40,000</span>
+            </div>
+            <h3 class="event-card__name">RoboWars</h3>
+            <p class="event-card__desc">15 kg bots, one arena, zero mercy. Last machine moving takes the crown.</p>
+            <ul class="event-card__meta">
+              <li><i class="fa-regular fa-calendar"></i> Dec 5, 2026</li>
+              <li><i class="fa-regular fa-clock"></i> 11:00 AM</li>
+              <li><i class="fa-solid fa-location-dot"></i> Main Arena</li>
+            </ul>
+            <button class="btn btn--primary btn--block ripple event-register">Register <i class="fa-solid fa-arrow-right"></i></button>
+          </article>
+
+          <article class="glass card event-card tilt reveal" data-reveal="up" data-category="robotics">
+            <div class="event-card__top">
+              <span class="event-card__cat"><i class="fa-solid fa-robot"></i> Robotics</span>
+              <span class="event-card__prize">₹15,000</span>
+            </div>
+            <h3 class="event-card__name">Line Follower Sprint</h3>
+            <p class="event-card__desc">Design an autonomous bot that chases the track like it owes it money.</p>
+            <ul class="event-card__meta">
+              <li><i class="fa-regular fa-calendar"></i> Dec 4, 2026</li>
+              <li><i class="fa-regular fa-clock"></i> 02:00 PM</li>
+              <li><i class="fa-solid fa-location-dot"></i> Robotics Bay</li>
+            </ul>
+            <button class="btn btn--primary btn--block ripple event-register">Register <i class="fa-solid fa-arrow-right"></i></button>
+          </article>
+
+          <article class="glass card event-card tilt reveal" data-reveal="up" data-category="gaming">
+            <div class="event-card__top">
+              <span class="event-card__cat"><i class="fa-solid fa-gamepad"></i> Gaming</span>
+              <span class="event-card__prize">₹30,000</span>
+            </div>
+            <h3 class="event-card__name">Valorant Vanguard</h3>
+            <p class="event-card__desc">5v5 tactical shooter tournament. Bring your squad, leave with glory.</p>
+            <ul class="event-card__meta">
+              <li><i class="fa-regular fa-calendar"></i> Dec 6, 2026</li>
+              <li><i class="fa-regular fa-clock"></i> 10:00 AM</li>
+              <li><i class="fa-solid fa-location-dot"></i> Gaming Zone</li>
+            </ul>
+            <button class="btn btn--primary btn--block ripple event-register">Register <i class="fa-solid fa-arrow-right"></i></button>
+          </article>
+
+          <article class="glass card event-card tilt reveal" data-reveal="up" data-category="gaming">
+            <div class="event-card__top">
+              <span class="event-card__cat"><i class="fa-solid fa-gamepad"></i> Gaming</span>
+              <span class="event-card__prize">₹10,000</span>
+            </div>
+            <h3 class="event-card__name">Retro Arcade Royale</h3>
+            <p class="event-card__desc">Consoles, classics and couch chaos. Speedruns, fighting games and more.</p>
+            <ul class="event-card__meta">
+              <li><i class="fa-regular fa-calendar"></i> Dec 5, 2026</li>
+              <li><i class="fa-regular fa-clock"></i> 03:00 PM</li>
+              <li><i class="fa-solid fa-location-dot"></i> Gaming Zone</li>
+            </ul>
+            <button class="btn btn--primary btn--block ripple event-register">Register <i class="fa-solid fa-arrow-right"></i></button>
+          </article>
+
+          <article class="glass card event-card tilt reveal" data-reveal="up" data-category="design">
+            <div class="event-card__top">
+              <span class="event-card__cat"><i class="fa-solid fa-palette"></i> Design</span>
+              <span class="event-card__prize">₹20,000</span>
+            </div>
+            <h3 class="event-card__name">UI/UX Canvas</h3>
+            <p class="event-card__desc">Design sprint: research to high-fidelity prototype in 6 hours flat.</p>
+            <ul class="event-card__meta">
+              <li><i class="fa-regular fa-calendar"></i> Dec 4, 2026</li>
+              <li><i class="fa-regular fa-clock"></i> 01:00 PM</li>
+              <li><i class="fa-solid fa-location-dot"></i> Design Studio</li>
+            </ul>
+            <button class="btn btn--primary btn--block ripple event-register">Register <i class="fa-solid fa-arrow-right"></i></button>
+          </article>
+
+          <article class="glass card event-card tilt reveal" data-reveal="up" data-category="design">
+            <div class="event-card__top">
+              <span class="event-card__cat"><i class="fa-solid fa-palette"></i> Design</span>
+              <span class="event-card__prize">₹12,000</span>
+            </div>
+            <h3 class="event-card__name">Logo &amp; Poster Marathon</h3>
+            <p class="event-card__desc">One brief, three hours, unlimited creativity. Live audience voting finale.</p>
+            <ul class="event-card__meta">
+              <li><i class="fa-regular fa-calendar"></i> Dec 5, 2026</li>
+              <li><i class="fa-regular fa-clock"></i> 09:30 AM</li>
+              <li><i class="fa-solid fa-location-dot"></i> Design Studio</li>
+            </ul>
+            <button class="btn btn--primary btn--block ripple event-register">Register <i class="fa-solid fa-arrow-right"></i></button>
+          </article>
+
+          <article class="glass card event-card tilt reveal" data-reveal="up" data-category="quiz">
+            <div class="event-card__top">
+              <span class="event-card__cat"><i class="fa-solid fa-brain"></i> Quiz</span>
+              <span class="event-card__prize">₹18,000</span>
+            </div>
+            <h3 class="event-card__name">Quiz-o-Mania</h3>
+            <p class="event-card__desc">Tech, pop-culture, science and the weird stuff in between. Buzz in fast.</p>
+            <ul class="event-card__meta">
+              <li><i class="fa-regular fa-calendar"></i> Dec 5, 2026</li>
+              <li><i class="fa-regular fa-clock"></i> 02:00 PM</li>
+              <li><i class="fa-solid fa-location-dot"></i> Seminar Hall</li>
+            </ul>
+            <button class="btn btn--primary btn--block ripple event-register">Register <i class="fa-solid fa-arrow-right"></i></button>
+          </article>
+
+          <article class="glass card event-card tilt reveal" data-reveal="up" data-category="cultural">
+            <div class="event-card__top">
+              <span class="event-card__cat"><i class="fa-solid fa-music"></i> Cultural</span>
+              <span class="event-card__prize">₹35,000</span>
+            </div>
+            <h3 class="event-card__name">Battle of the Bands</h3>
+            <p class="event-card__desc">The grand finale night. Six bands, one stage, a crowd that never sits down.</p>
+            <ul class="event-card__meta">
+              <li><i class="fa-regular fa-calendar"></i> Dec 6, 2026</li>
+              <li><i class="fa-regular fa-clock"></i> 05:00 PM</li>
+              <li><i class="fa-solid fa-location-dot"></i> Open Air Theatre</li>
+            </ul>
+            <button class="btn btn--primary btn--block ripple event-register">Register <i class="fa-solid fa-arrow-right"></i></button>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         SCHEDULE / TIMELINE — Day 1 / 2 / 3 tabs with animated entries
+         TIMELINE: edit the <li> items inside each day panel
+         ================================================================ -->
+    <section class="section" id="schedule">
+      <div class="container">
+        <header class="section__head reveal" data-reveal="up">
+          <p class="section__eyebrow">Plan your 72 hours</p>
+          <h2 class="section__title gradient-text">Event Schedule</h2>
+          <p class="section__sub">4 – 6 December 2026 · IEM Campus</p>
+        </header>
+
+        <!-- Day tabs -->
+        <div class="day-tabs reveal" data-reveal="fade" role="tablist" aria-label="Schedule days">
+          <button class="day-tab active" role="tab" aria-selected="true" data-day="day1">Day 1 <small>Dec 4</small></button>
+          <button class="day-tab" role="tab" aria-selected="false" data-day="day2">Day 2 <small>Dec 5</small></button>
+          <button class="day-tab" role="tab" aria-selected="false" data-day="day3">Day 3 <small>Dec 6</small></button>
+        </div>
+
+        <!-- DAY 1 -->
+        <div class="timeline active" id="day1" role="tabpanel">
+          <div class="timeline__item reveal" data-reveal="left">
+            <div class="timeline__time">08:30 AM</div>
+            <div class="glass card timeline__card">
+              <h4>Gates Open · Registration &amp; Kit Pickup</h4>
+              <p>Grab your badge, fest kit and caffeine. The campus is yours.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Main Gate &amp; Atrium</span>
+            </div>
+          </div>
+          <div class="timeline__item reveal" data-reveal="left">
+            <div class="timeline__time">10:00 AM</div>
+            <div class="glass card timeline__card">
+              <h4>Opening Ceremony · Keynote</h4>
+              <p>Lighting the lamp, dropping the beat — and a keynote on "AI-native everything".</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Open Air Theatre</span>
+            </div>
+          </div>
+          <div class="timeline__item reveal" data-reveal="left">
+            <div class="timeline__time">01:00 PM</div>
+            <div class="glass card timeline__card">
+              <h4>CodeStorm Hackathon Kickoff + UI/UX Canvas</h4>
+              <p>Problem statements drop. 24 hours on the clock for hackers; 6 for designers.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Innovation Lab &amp; Design Studio</span>
+            </div>
+          </div>
+          <div class="timeline__item reveal" data-reveal="left">
+            <div class="timeline__time">07:30 PM</div>
+            <div class="glass card timeline__card">
+              <h4>Neon Night · DJ Sundown</h4>
+              <p>Day 1 closes with an open-air DJ set under the stars.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Central Plaza</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DAY 2 -->
+        <div class="timeline" id="day2" role="tabpanel" hidden>
+          <div class="timeline__item">
+            <div class="timeline__time">09:30 AM</div>
+            <div class="glass card timeline__card">
+              <h4>Logo &amp; Poster Marathon</h4>
+              <p>Design brief goes live at 09:30 sharp. Latecomers get Comic Sans.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Design Studio</span>
+            </div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__time">10:00 AM</div>
+            <div class="glass card timeline__card">
+              <h4>Clash of Coders</h4>
+              <p>Rated competitive programming round. ICPC rules, ICPC nerves.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> CSE Lab 2</span>
+            </div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__time">11:00 AM</div>
+            <div class="glass card timeline__card">
+              <h4>RoboWars Qualifiers</h4>
+              <p>The arena shakes. The crowd screams. Sparks fly.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Main Arena</span>
+            </div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__time">02:00 PM</div>
+            <div class="glass card timeline__card">
+              <h4>Quiz-o-Mania</h4>
+              <p>Four rounds of trivia chaos hosted by Kolkata's favourite quizmaster.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Seminar Hall</span>
+            </div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__time">08:00 PM</div>
+            <div class="glass card timeline__card">
+              <h4>Pro-Night: Stand-up &amp; Comedy</h4>
+              <p>Laugh until your abs compile. Open for all fest-pass holders.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Open Air Theatre</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DAY 3 -->
+        <div class="timeline" id="day3" role="tabpanel" hidden>
+          <div class="timeline__item">
+            <div class="timeline__time">10:00 AM</div>
+            <div class="glass card timeline__card">
+              <h4>Valorant Vanguard · Finals Bracket</h4>
+              <p>Top 8 squads. Double elimination. Big screen, bigger plays.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Gaming Zone</span>
+            </div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__time">12:00 PM</div>
+            <div class="glass card timeline__card">
+              <h4>Drone Rush Exhibition</h4>
+              <p>Autonomous drones, obstacle courses and a freestyle show.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Sports Ground</span>
+            </div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__time">03:00 PM</div>
+            <div class="glass card timeline__card">
+              <h4>RoboWars Grand Final &amp; Hackathon Demos</h4>
+              <p>Final showdowns on both fronts — metal and code.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Main Arena &amp; Innovation Lab</span>
+            </div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__time">05:00 PM</div>
+            <div class="glass card timeline__card">
+              <h4>Battle of the Bands · Finale</h4>
+              <p>Six bands. One trophy. The loudest evening of the year.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Open Air Theatre</span>
+            </div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__time">09:00 PM</div>
+            <div class="glass card timeline__card">
+              <h4>Prize Distribution &amp; Closing Ceremony</h4>
+              <p>₹5 lakh given away, confetti deployed, memories archived forever.</p>
+              <span class="timeline__venue"><i class="fa-solid fa-location-dot"></i> Open Air Theatre</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         GALLERY — masonry grid + lightbox
+         Replace /images/gallery1.jpg … gallery8.jpg with your own photos
+         ================================================================ -->
+    <section class="section" id="gallery">
+      <div class="container">
+        <header class="section__head reveal" data-reveal="up">
+          <p class="section__eyebrow">Moments &amp; memories</p>
+          <h2 class="section__title gradient-text">Fest Gallery</h2>
+          <p class="section__sub">A glimpse of the energy — click any photo to zoom.</p>
+        </header>
+
+        <div class="gallery-grid" id="galleryGrid">
+          <figure class="gallery-item reveal" data-reveal="scale" data-caption="Hackathon night — ideas shipping at 3 AM">
+            <img src="images/gallery1.jpg" alt="Students coding at the overnight hackathon with neon lighting" loading="lazy" />
+            <figcaption>Hackathon Night</figcaption>
+          </figure>
+          <figure class="gallery-item gallery-item--tall reveal" data-reveal="scale" data-caption="RoboWars arena — sparks and glory">
+            <img src="images/gallery2.jpg" alt="Combat robots fighting in the RoboWars arena" loading="lazy" />
+            <figcaption>RoboWars Arena</figcaption>
+          </figure>
+          <figure class="gallery-item reveal" data-reveal="scale" data-caption="Valorant Vanguard — clutch rounds only">
+            <img src="images/gallery3.jpg" alt="Esports players competing at RGB-lit gaming stations" loading="lazy" />
+            <figcaption>Esports Arena</figcaption>
+          </figure>
+          <figure class="gallery-item gallery-item--wide reveal" data-reveal="scale" data-caption="Cultural night — the crowd never sat down">
+            <img src="images/gallery4.jpg" alt="Live band performing on stage under pink and purple lights" loading="lazy" />
+            <figcaption>Cultural Night</figcaption>
+          </figure>
+          <figure class="gallery-item reveal" data-reveal="scale" data-caption="UI/UX Canvas — from sketch to prototype">
+            <img src="images/gallery5.jpg" alt="Design workshop with tablets and wireframe sketches" loading="lazy" />
+            <figcaption>Design Workshop</figcaption>
+          </figure>
+          <figure class="gallery-item reveal" data-reveal="scale" data-caption="Drone Rush — flight of the future">
+            <img src="images/gallery6.jpg" alt="Racing drone flying through a glowing neon gate" loading="lazy" />
+            <figcaption>Drone Rush</figcaption>
+          </figure>
+          <figure class="gallery-item gallery-item--tall reveal" data-reveal="scale" data-caption="Keynote — the future, unpacked">
+            <img src="images/gallery7.jpg" alt="Keynote speaker on stage in front of a giant LED screen" loading="lazy" />
+            <figcaption>Opening Keynote</figcaption>
+          </figure>
+          <figure class="gallery-item reveal" data-reveal="scale" data-caption="Victory lap — winners take the stage">
+            <img src="images/gallery8.jpg" alt="Students celebrating with a trophy as confetti falls" loading="lazy" />
+            <figcaption>Victory Lap</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         REGISTRATION FORM — validated in script.js (validateRegistration)
+         ================================================================ -->
+    <section class="section" id="register">
+      <div class="container">
+        <header class="section__head reveal" data-reveal="up">
+          <p class="section__eyebrow">Secure your slot</p>
+          <h2 class="section__title gradient-text">Register for TechNova</h2>
+          <p class="section__sub">Fill in the form — we'll email your confirmation and fest pass.</p>
+        </header>
+
+        <div class="glass card form-card reveal" data-reveal="up">
+          <form id="registerForm" novalidate>
+            <div class="form-grid">
+              <!-- Full name -->
+              <div class="form-group">
+                <label for="regName">Full Name <span aria-hidden="true">*</span></label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-user"></i>
+                  <input type="text" id="regName" name="name" placeholder="e.g. Aarav Sharma" autocomplete="name" />
+                </div>
+                <small class="form-msg" id="regNameMsg"></small>
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label for="regEmail">Email <span aria-hidden="true">*</span></label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-envelope"></i>
+                  <input type="email" id="regEmail" name="email" placeholder="you@college.edu" autocomplete="email" />
+                </div>
+                <small class="form-msg" id="regEmailMsg"></small>
+              </div>
+
+              <!-- Phone -->
+              <div class="form-group">
+                <label for="regPhone">Phone (10-digit) <span aria-hidden="true">*</span></label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-phone"></i>
+                  <input type="tel" id="regPhone" name="phone" placeholder="9876543210" autocomplete="tel" maxlength="10" />
+                </div>
+                <small class="form-msg" id="regPhoneMsg"></small>
+              </div>
+
+              <!-- College -->
+              <div class="form-group">
+                <label for="regCollege">College <span aria-hidden="true">*</span></label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-building-columns"></i>
+                  <input type="text" id="regCollege" name="college" placeholder="Your college name" />
+                </div>
+                <small class="form-msg" id="regCollegeMsg"></small>
+              </div>
+
+              <!-- Department -->
+              <div class="form-group">
+                <label for="regDept">Department <span aria-hidden="true">*</span></label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-microchip"></i>
+                  <input type="text" id="regDept" name="dept" placeholder="e.g. Computer Science" />
+                </div>
+                <small class="form-msg" id="regDeptMsg"></small>
+              </div>
+
+              <!-- Year -->
+              <div class="form-group">
+                <label for="regYear">Year of Study <span aria-hidden="true">*</span></label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-graduation-cap"></i>
+                  <select id="regYear" name="year">
+                    <option value="">Select year…</option>
+                    <option value="1">1st Year</option>
+                    <option value="2">2nd Year</option>
+                    <option value="3">3rd Year</option>
+                    <option value="4">4th Year</option>
+                    <option value="pg">Postgraduate</option>
+                  </select>
+                </div>
+                <small class="form-msg" id="regYearMsg"></small>
+              </div>
+            </div>
+
+            <!-- Event selection checkboxes -->
+            <fieldset class="form-group form-group--full">
+              <legend>Select Events <span aria-hidden="true">*</span> <small>(at least one)</small></legend>
+              <div class="check-grid">
+                <label class="check-pill"><input type="checkbox" name="events" value="CodeStorm Hackathon" /> CodeStorm</label>
+                <label class="check-pill"><input type="checkbox" name="events" value="Clash of Coders" /> Clash of Coders</label>
+                <label class="check-pill"><input type="checkbox" name="events" value="RoboWars" /> RoboWars</label>
+                <label class="check-pill"><input type="checkbox" name="events" value="Line Follower Sprint" /> Line Follower</label>
+                <label class="check-pill"><input type="checkbox" name="events" value="Valorant Vanguard" /> Valorant</label>
+                <label class="check-pill"><input type="checkbox" name="events" value="UI/UX Canvas" /> UI/UX Canvas</label>
+                <label class="check-pill"><input type="checkbox" name="events" value="Quiz-o-Mania" /> Quiz-o-Mania</label>
+                <label class="check-pill"><input type="checkbox" name="events" value="Battle of the Bands" /> Battle of Bands</label>
+              </div>
+              <small class="form-msg" id="regEventsMsg"></small>
+            </fieldset>
+
+            <!-- Terms -->
+            <div class="form-group form-group--full">
+              <label class="check-pill check-pill--terms">
+                <input type="checkbox" id="regTerms" />
+                I agree to the fest rules, code of conduct and the privacy policy. <span aria-hidden="true">*</span>
+              </label>
+              <small class="form-msg" id="regTermsMsg"></small>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--lg btn--block ripple">
+              <i class="fa-solid fa-paper-plane"></i> Submit Registration
+            </button>
+            <p class="form-note"><i class="fa-solid fa-lock"></i> Demo form — your entry is stored locally in this browser (localStorage).</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         SPONSORS — auto-scrolling marquee (pause on hover)
+         Replace the names below with real sponsor logos/names
+         ================================================================ -->
+    <section class="section section--slim" id="sponsors" aria-label="Our sponsors">
+      <div class="container">
+        <header class="section__head reveal" data-reveal="up">
+          <p class="section__eyebrow">Powered by the best</p>
+          <h2 class="section__title gradient-text">Our Sponsors</h2>
+        </header>
+      </div>
+      <!-- Marquee track is duplicated twice for a seamless loop -->
+      <div class="marquee reveal" data-reveal="fade">
+        <div class="marquee__track">
+          <div class="sponsor glass"><i class="fa-solid fa-microchip"></i> Quantum Labs</div>
+          <div class="sponsor glass"><i class="fa-solid fa-cloud"></i> Nebula Cloud</div>
+          <div class="sponsor glass"><i class="fa-solid fa-bolt"></i> VoltEdge</div>
+          <div class="sponsor glass"><i class="fa-solid fa-brain"></i> NeuroTech AI</div>
+          <div class="sponsor glass"><i class="fa-solid fa-shield-halved"></i> CyberFort</div>
+          <div class="sponsor glass"><i class="fa-solid fa-rocket"></i> LaunchPad</div>
+          <div class="sponsor glass"><i class="fa-solid fa-code"></i> DevSprint</div>
+          <div class="sponsor glass"><i class="fa-solid fa-satellite-dish"></i> Orbit Systems</div>
+          <!-- duplicate set -->
+          <div class="sponsor glass" aria-hidden="true"><i class="fa-solid fa-microchip"></i> Quantum Labs</div>
+          <div class="sponsor glass" aria-hidden="true"><i class="fa-solid fa-cloud"></i> Nebula Cloud</div>
+          <div class="sponsor glass" aria-hidden="true"><i class="fa-solid fa-bolt"></i> VoltEdge</div>
+          <div class="sponsor glass" aria-hidden="true"><i class="fa-solid fa-brain"></i> NeuroTech AI</div>
+          <div class="sponsor glass" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i> CyberFort</div>
+          <div class="sponsor glass" aria-hidden="true"><i class="fa-solid fa-rocket"></i> LaunchPad</div>
+          <div class="sponsor glass" aria-hidden="true"><i class="fa-solid fa-code"></i> DevSprint</div>
+          <div class="sponsor glass" aria-hidden="true"><i class="fa-solid fa-satellite-dish"></i> Orbit Systems</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         FAQ — animated accordion
+         FAQ: edit the <button> questions and the panel text below
+         ================================================================ -->
+    <section class="section" id="faq">
+      <div class="container container--narrow">
+        <header class="section__head reveal" data-reveal="up">
+          <p class="section__eyebrow">Got questions?</p>
+          <h2 class="section__title gradient-text">Frequently Asked</h2>
+        </header>
+
+        <div class="faq-list">
+          <div class="faq-item glass reveal" data-reveal="up">
+            <button class="faq-q" aria-expanded="false">
+              <span>Who can participate in TechNova 2026?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="faq-a"><p>Any student with a valid college ID from a recognised university in India. Events are open to undergraduates and postgraduates — some workshops are open to school students too.</p></div>
+          </div>
+
+          <div class="faq-item glass reveal" data-reveal="up">
+            <button class="faq-q" aria-expanded="false">
+              <span>How do I register, and is there a fee?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="faq-a"><p>Register through the form on this page. Entry to the fest campus is free; a few flagship events (Hackathon, RoboWars, Esports) have a nominal participation fee which you'll see during confirmation.</p></div>
+          </div>
+
+          <div class="faq-item glass reveal" data-reveal="up">
+            <button class="faq-q" aria-expanded="false">
+              <span>Can I participate in multiple events?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="faq-a"><p>Absolutely. Tick as many events as you like in the registration form. Just make sure their timings don't clash on the schedule page — we can't teleport… yet.</p></div>
+          </div>
+
+          <div class="faq-item glass reveal" data-reveal="up">
+            <button class="faq-q" aria-expanded="false">
+              <span>Is accommodation provided for outstation students?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="faq-a"><p>Yes — limited hostel stays are available on a first-come, first-served basis. Drop us a note via the contact form at least 7 days before the fest and we'll share the details.</p></div>
+          </div>
+
+          <div class="faq-item glass reveal" data-reveal="up">
+            <button class="faq-q" aria-expanded="false">
+              <span>Will certificates be provided?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="faq-a"><p>Every registered participant gets a digital participation certificate. Winners receive printed certificates, trophies and their share of the ₹5 lakh prize pool.</p></div>
+          </div>
+
+          <div class="faq-item glass reveal" data-reveal="up">
+            <button class="faq-q" aria-expanded="false">
+              <span>How do I become a sponsor or volunteer?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="faq-a"><p>Reach out through the contact form or write to us at sponsors@technova.edu.in. Volunteers can sign up through the registration form and mention "Volunteer" in the department field.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         CONTACT US — form + details + map placeholder + socials
+         ================================================================ -->
+    <section class="section" id="contact">
+      <div class="container">
+        <header class="section__head reveal" data-reveal="up">
+          <p class="section__eyebrow">Say hello</p>
+          <h2 class="section__title gradient-text">Get In Touch</h2>
+          <p class="section__sub">Questions, collabs, or just want to say hi — we're all ears.</p>
+        </header>
+
+        <div class="contact__grid">
+          <!-- Contact form -->
+          <div class="glass card form-card reveal" data-reveal="left">
+            <form id="contactForm" novalidate>
+              <div class="form-group">
+                <label for="ctName">Your Name <span aria-hidden="true">*</span></label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-user"></i>
+                  <input type="text" id="ctName" placeholder="Your name" autocomplete="name" />
+                </div>
+                <small class="form-msg" id="ctNameMsg"></small>
+              </div>
+              <div class="form-group">
+                <label for="ctEmail">Email <span aria-hidden="true">*</span></label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-envelope"></i>
+                  <input type="email" id="ctEmail" placeholder="you@email.com" autocomplete="email" />
+                </div>
+                <small class="form-msg" id="ctEmailMsg"></small>
+              </div>
+              <div class="form-group">
+                <label for="ctSubject">Subject <span aria-hidden="true">*</span></label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-tag"></i>
+                  <input type="text" id="ctSubject" placeholder="What's this about?" />
+                </div>
+                <small class="form-msg" id="ctSubjectMsg"></small>
+              </div>
+              <div class="form-group">
+                <label for="ctMessage">Message <span aria-hidden="true">*</span></label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-comment-dots"></i>
+                  <textarea id="ctMessage" rows="4" placeholder="Write your message…"></textarea>
+                </div>
+                <small class="form-msg" id="ctMessageMsg"></small>
+              </div>
+              <button type="submit" class="btn btn--primary btn--lg btn--block ripple">
+                <i class="fa-solid fa-paper-plane"></i> Send Message
+              </button>
+            </form>
+          </div>
+
+          <!-- Contact details + map -->
+          <div class="contact__side">
+            <div class="glass card contact__info reveal" data-reveal="right">
+              <h3>Contact Details</h3>
+              <ul class="contact__list">
+                <li>
+                  <span class="contact__icon"><i class="fa-solid fa-location-dot"></i></span>
+                  <div>
+                    <strong>Venue</strong>
+                    <p>IEM Campus, Salt Lake Sector V,<br />Kolkata, West Bengal 700091</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="contact__icon"><i class="fa-solid fa-envelope"></i></span>
+                  <div>
+                    <strong>Email</strong>
+                    <p><a href="mailto:hello@technova.edu.in">hello@technova.edu.in</a></p>
+                  </div>
+                </li>
+                <li>
+                  <span class="contact__icon"><i class="fa-solid fa-phone"></i></span>
+                  <div>
+                    <strong>Phone</strong>
+                    <p><a href="tel:+919876543210">+91 98765 43210</a></p>
+                  </div>
+                </li>
+              </ul>
+
+              <!-- Social icons with hover effects -->
+              <div class="socials" aria-label="Social media links">
+                <a href="#" class="social" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="social" aria-label="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" class="social" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" class="social" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="#" class="social" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
+              </div>
+            </div>
+
+            <!-- Map placeholder
+                 TIP: replace this <div> with a real Google Maps <iframe>:
+                 <iframe src="https://maps.google.com/maps?q=IEM%20Kolkata&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                         title="Map" loading="lazy" allowfullscreen></iframe>
+            -->
+            <div class="glass card map-box reveal" data-reveal="right">
+              <div class="map-box__grid" aria-hidden="true"></div>
+              <div class="map-box__pin"><i class="fa-solid fa-location-dot"></i></div>
+              <p class="map-box__label">IEM Campus · Salt Lake Sector V, Kolkata</p>
+              <a class="btn btn--glass btn--sm" href="https://maps.google.com/?q=IEM+Kolkata" target="_blank" rel="noopener noreferrer">
+                Open in Google Maps <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================================================================
+       FOOTER
+       ================================================================ -->
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <a href="#home" class="navbar__logo">
+          <span class="navbar__logo-mark">TN</span>
+          <span class="navbar__logo-text">TechNova<em>2026</em></span>
+        </a>
+        <p>The annual inter-college techno-cultural fest of IEM Kolkata. 4–6 December 2026.</p>
+        <div class="socials">
+          <a href="#" class="social" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social" aria-label="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" class="social" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="social" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+
+      <nav class="footer__links" aria-label="Quick links">
+        <h4>Quick Links</h4>
+        <a href="#about">About</a>
+        <a href="#events">Events</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#register">Register</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <nav class="footer__links" aria-label="More links">
+        <h4>More</h4>
+        <a href="#contact">Contact Us</a>
+        <a href="#sponsors">Sponsors</a>
+        <a href="#">Code of Conduct</a>
+        <a href="#">Privacy Policy</a>
+      </nav>
+
+      <!-- Newsletter -->
+      <div class="footer__news">
+        <h4>Stay in the loop</h4>
+        <p>Event drops, speaker reveals and secret discounts.</p>
+        <form class="news-form" id="newsForm" novalidate>
+          <input type="email" id="newsEmail" placeholder="Your email" aria-label="Email for newsletter" />
+          <button type="submit" class="btn btn--primary btn--sm ripple" aria-label="Subscribe">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© <span id="year">2026</span> TechNova · Institute of Engineering &amp; Management, Kolkata. All rights reserved.</p>
+      <p class="footer__credit">Designed &amp; built with <i class="fa-solid fa-heart"></i> and vanilla JS.</p>
+    </div>
+  </footer>
+
+  <!-- ================================================================
+       LIGHTBOX — gallery image viewer (open/prev/next via script.js)
+       ================================================================ -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
+    <button class="lightbox__close" id="lightboxClose" aria-label="Close image viewer"><i class="fa-solid fa-xmark"></i></button>
+    <button class="lightbox__nav lightbox__nav--prev" id="lightboxPrev" aria-label="Previous image"><i class="fa-solid fa-chevron-left"></i></button>
+    <figure class="lightbox__figure">
+      <img id="lightboxImg" src="" alt="" />
+      <figcaption id="lightboxCaption"></figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__nav--next" id="lightboxNext" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>
+  </div>
+
+  <!-- ================================================================
+       AUTH MODAL — Login / Sign-up with toggle (demo localStorage auth)
+       ================================================================ -->
+  <div class="modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle" hidden>
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="glass modal__panel">
+      <button class="modal__close" data-close-modal aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button>
+
+      <!-- Tabs -->
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab active" id="loginTab" role="tab" aria-selected="true">Login</button>
+        <button class="auth-tab" id="signupTab" role="tab" aria-selected="false">Sign Up</button>
+        <span class="auth-tabs__ink" id="authInk"></span>
+      </div>
+
+      <h2 class="modal__title gradient-text" id="authTitle">Welcome back</h2>
+
+      <!-- LOGIN -->
+      <form class="auth-form" id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="liEmail">Email</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="liEmail" placeholder="you@email.com" autocomplete="email" />
+          </div>
+          <small class="form-msg" id="liEmailMsg"></small>
+        </div>
+        <div class="form-group">
+          <label for="liPass">Password</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="liPass" placeholder="Your password" autocomplete="current-password" />
+            <button type="button" class="eye-btn" data-toggle-pass="liPass" aria-label="Show or hide password">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+          <small class="form-msg" id="liPassMsg"></small>
+        </div>
+        <div class="auth-row">
+          <label class="check-pill"><input type="checkbox" id="liRemember" /> Remember me</label>
+          <a href="#" class="auth-link" id="forgotLink">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btn--primary btn--lg btn--block ripple">Login</button>
+      </form>
+
+      <!-- SIGN UP -->
+      <form class="auth-form" id="signupForm" novalidate hidden>
+        <div class="form-group">
+          <label for="suName">Full Name</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="suName" placeholder="Your name" autocomplete="name" />
+          </div>
+          <small class="form-msg" id="suNameMsg"></small>
+        </div>
+        <div class="form-group">
+          <label for="suEmail">Email</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="suEmail" placeholder="you@email.com" autocomplete="email" />
+          </div>
+          <small class="form-msg" id="suEmailMsg"></small>
+        </div>
+        <div class="form-group">
+          <label for="suPass">Password</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="suPass" placeholder="Create a password" autocomplete="new-password" />
+            <button type="button" class="eye-btn" data-toggle-pass="suPass" aria-label="Show or hide password">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+          <!-- Password strength meter -->
+          <div class="strength" aria-live="polite">
+            <div class="strength__bar"><div class="strength__fill" id="strengthFill"></div></div>
+            <span class="strength__label" id="strengthLabel">Strength</span>
+          </div>
+          <small class="form-msg" id="suPassMsg"></small>
+        </div>
+        <div class="form-group">
+          <label for="suConfirm">Confirm Password</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-shield-halved"></i>
+            <input type="password" id="suConfirm" placeholder="Repeat password" autocomplete="new-password" />
+            <button type="button" class="eye-btn" data-toggle-pass="suConfirm" aria-label="Show or hide password">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+          <small class="form-msg" id="suConfirmMsg"></small>
+        </div>
+        <button type="submit" class="btn btn--primary btn--lg btn--block ripple">Create Account</button>
+        <p class="form-note"><i class="fa-solid fa-flask"></i> Demo sign-up — accounts live only in your browser.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       SUCCESS POPUP — shown after successful registration
+       ================================================================ -->
+  <div class="modal" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle" hidden>
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="glass modal__panel modal__panel--success">
+      <!-- Animated check mark (SVG stroke draw) -->
+      <svg class="success-check" viewBox="0 0 52 52" aria-hidden="true">
+        <circle class="success-check__circle" cx="26" cy="26" r="24" fill="none" />
+        <path class="success-check__tick" fill="none" d="M14 27l8 8 16-16" />
+      </svg>
+      <h2 class="modal__title gradient-text" id="successTitle">You're in! 🎉</h2>
+      <p class="success-text" id="successText">Registration successful. Check your inbox for the confirmation.</p>
+      <button class="btn btn--primary btn--block ripple" data-close-modal>Awesome</button>
+    </div>
+  </div>
+
+  <!-- Toast notifications container -->
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Back-to-top button -->
+  <button class="back-top" id="backTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <!-- Main script -->
+  <script src="script.js"></script>
+</body>
+</html>
