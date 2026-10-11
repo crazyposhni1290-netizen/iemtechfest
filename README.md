@@ -90,11 +90,14 @@ npx serve .
 
 ### GitHub Pages (this repo)
 
-1. Push the code to GitHub (the repo already has it).
-2. Go to **Settings → Pages** in the GitHub repo.
-3. Under *Build and deployment*, choose **Deploy from a branch**, pick **main** and **/ (root)**, then **Save**.
-4. After 1–2 minutes your site is live at:
-   **https://<username>.github.io/<repo-name>/** (for this repo: `https://crazyposhni1290-netizen.github.io/iemtechfest/`)
+1. Go to **Settings → Pages** in the GitHub repo (this is a **one-time** step — enabling Pages needs a repo-admin click and cannot be automated).
+2. Under *Build and deployment* → **Source**, choose either:
+   - **Deploy from a branch** → pick **main** and **/ (root)** → **Save** *(simplest — GitHub publishes every push automatically)*, or
+   - **GitHub Actions** → **Save** *(the included workflow `.github/workflows/deploy-pages.yml` then deploys on every push)*.
+3. After 1–2 minutes your site is live at:
+   **https://crazyposhni1290-netizen.github.io/iemtechfest/**
+
+> The deployment workflow is "smart": if Pages uses the branch method (or is not enabled yet) the workflow exits cleanly without errors and prints guidance.
 
 ### Netlify (drag & drop)
 
